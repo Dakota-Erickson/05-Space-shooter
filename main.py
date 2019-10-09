@@ -22,6 +22,8 @@ BULLET_SCALE = 1
 BULLET_SPEED = 10
 BULLET_DAMAGE = 2
 
+SCORE_DECREASE = .1
+
 NUM_ENEMIES = 5
 ENEMY_SCALE = .5
 ENEMY_MIN_Y = 400
@@ -140,6 +142,7 @@ class Window(arcade.Window):
         self.score = 0.0
         self.hp = SHIP_HP    
         self.background = arcade.load_texture("assets/background.png")
+        self.score = 1000
 
         self.player = Player("assets/Player_Blue.png", SHIP_SCALE, SCREEN_WIDTH // 2, 100)
         self.player_list.append(self.player)
@@ -159,6 +162,8 @@ class Window(arcade.Window):
             self.bullet_list.update()
             self.enemy_bullet_list.update()
 
+            self.score -= SCORE_DECREASE
+
             for e in self.enemy_list:
                 if random.random() < ENEMY_PROB_SHOOT:
                     self.shoot_enemy_bullet(e)
@@ -172,15 +177,18 @@ class Window(arcade.Window):
                 for b in bullets:
                     e.hp -= b.damage
                     b.kill()
+                    self.score += 10
                 if e.hp <= 0:
                     e.kill()   
+                    self.score += 100
         enemy_bullets = arcade.check_for_collision_with_list(self.player, self.enemy_bullet_list)
         for eb in enemy_bullets:
             self.hp -= eb.damage
             eb.kill()
+            self.score -= 10
         if  self.hp<=0:
             self.hp = 0     
-            self.playing = false           
+            self.playing = False           
 
 
 
